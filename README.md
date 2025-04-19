@@ -1,70 +1,102 @@
-# Getting Started with Create React App
+# Recipe Finder App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React application that allows users to search, explore, and save recipes. Built with React.js using functional components and hooks, React Router for navigation, React Context API for state management, and Tailwind CSS for styling.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Search for recipes by name, ingredients, meal type, cuisine, and more
+- View detailed recipe information including ingredients, instructions, and nutritional info
+- Save favorite recipes
+- Manage a shopping list of ingredients
+- Responsive design for all screen sizes
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **React.js** (Functional Components, Hooks)
+- **React Router** (Navigation)
+- **React Context API** (State Management)
+- **Tailwind CSS** (Styling)
+- **Axios** (API Requests)
+- **Spoonacular API** (Recipe Data)
+- **LocalStorage** (Persistent Data Storage)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+git clone https://github.com/yourusername/recipe-finder-app.git
+cd recipe-finder-app
+```
 
-### `npm run build`
+2. Install dependencies:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Create a `.env` file in the root directory and add your Spoonacular API key:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+REACT_APP_SPOONACULAR_API_KEY=your_api_key_here
+```
 
-### `npm run eject`
+You can get a free API key from [Spoonacular Food API](https://spoonacular.com/food-api).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+> Note: If you don't provide an API key, the app will use mock data for development.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. Start the development server:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+5. Open [http://localhost:3000](http://localhost:3000) to view the app in your browser.
 
-## Learn More
+## Project Structure
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+recipe-finder-app/
+│
+├── public/
+│   └── index.html
+│
+├── src/
+│   ├── components/     # Reusable components (RecipeCard, Navbar, etc.)
+│   ├── contexts/       # React Context for global state management
+│   ├── pages/          # Page components
+│   ├── services/       # API services
+│   ├── App.js          # Main app component
+│   └── index.js        # React entry point
+│
+├── .env                # Environment variables (add your API key here)
+├── package.json        # Project dependencies and scripts
+└── README.md           # Project documentation
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Usage
 
-### Code Splitting
+- **Home Page**: Search for recipes by name, ingredients, or filter by dietary preferences, cuisine, etc.
+- **Recipe Details**: View detailed information about a recipe, including ingredients, instructions, and nutritional information. Add ingredients to your shopping list.
+- **Favorites**: View and manage your favorite recipes.
+- **Shopping List**: Access your shopping list from the Favorites page.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Deployment
 
-### Analyzing the Bundle Size
+To build the app for production, run:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+npm run build
+```
 
-### Making a Progressive Web App
+This creates an optimized production build in the `build` folder, which can be deployed to services like Netlify, Vercel, or GitHub Pages.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Credits
 
-### Advanced Configuration
+- Recipe data provided by [Spoonacular API](https://spoonacular.com/food-api)
+- Icons from [Heroicons](https://heroicons.com/)
+- Styling with [Tailwind CSS](https://tailwindcss.com/)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## License
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+MIT
