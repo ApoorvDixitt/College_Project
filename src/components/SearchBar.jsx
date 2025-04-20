@@ -1,86 +1,113 @@
 import React, { useState } from 'react';
 
-const SearchBar = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
-  const [filters, setFilters] = useState({
-    diet: '',
-    cuisine: '',
-    mealType: '',
-    maxReadyTime: ''
-  });
-  const [showFilters, setShowFilters] = useState(false);
+// Meal type options - could be moved elsewhere but keeping here for simplicity
+const MEAL_TYPES = [
+  { value: '', label: 'Any Meal Type' },
+  { value: 'breakfast', label: 'Breakfast' },
+  { value: 'main course', label: 'Main Course' },
+  { value: 'side dish', label: 'Side Dish' },
+  { value: 'dessert', label: 'Dessert' },
+  { value: 'appetizer', label: 'Appetizer' },
+  { value: 'salad', label: 'Salad' },
+  { value: 'soup', label: 'Soup' }
+];
 
-  const handleQueryChange = (e) => {
-    setQuery(e.target.value);
-  };
+// Diet and cuisine options
+const DIETS = [
+  { value: '', label: 'Any Diet' },
+  { value: 'vegetarian', label: 'Vegetarian' },
+  { value: 'vegan', label: 'Vegan' },
+  { value: 'gluten-free', label: 'Gluten Free' },
+  { value: 'ketogenic', label: 'Ketogenic' },
+  { value: 'paleo', label: 'Paleo' }
+];
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+const CUISINES = [
+  { value: '', label: 'Any Cuisine' },
+  { value: 'italian', label: 'Italian' },
+  { value: 'mexican', label: 'Mexican' },
+  { value: 'indian', label: 'Indian' },
+  { value: 'chinese', label: 'Chinese' },
+  { value: 'thai', label: 'Thai' },
+  { value: 'french', label: 'French' }
+];
 
-  const handleSubmit = (e) => {
+// this is the actual search component
+function SearchBar({ onSearch }) {
+  // search term state
+  const [searchInput, setSearchInput] = useState('');
+  
+  // filter states
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [dietType, setDietType] = useState('');
+  const [cuisineType, setCuisineType] = useState('');
+  const [mealType, setMealType] = useState('');
+  const [maxTime, setMaxTime] = useState('');
+
+  // update search text
+  function handleSearchChange(e) {
+    setSearchInput(e.target.value);
+  }
+
+  // handles the form submission - this prevents page reload and calls search callback
+  const submitSearch = e => {
     e.preventDefault();
     
-    const searchParams = {
-      query: query,
-      ...Object.fromEntries(
-        Object.entries(filters).filter(([_, value]) => value !== '')
-      )
-    };
+    // build params object with all non-empty values
+    const params = { query: searchInput };
     
-    onSearch(searchParams);
+    // only add filters if they have values
+    if (dietType) params.diet = dietType;
+    if (cuisineType) params.cuisine = cuisineType;
+    if (mealType) params.mealType = mealType;
+    if (maxTime) params.maxReadyTime = maxTime;
+    
+    // trigger actual search
+    onSearch(params);
   };
 
-  const dietOptions = [
-    { value: '', label: 'Any Diet' },
-    { value: 'vegetarian', label: 'Vegetarian' },
-    { value: 'vegan', label: 'Vegan' },
-    { value: 'gluten-free', label: 'Gluten Free' },
-    { value: 'ketogenic', label: 'Ketogenic' },
-    { value: 'paleo', label: 'Paleo' }
-  ];
+  // toggle filters visibility
+  const toggleFilters = () => setFiltersVisible(!filtersVisible);
   
-  const cuisineOptions = [
-    { value: '', label: 'Any Cuisine' },
-    { value: 'italian', label: 'Italian' },
-    { value: 'mexican', label: 'Mexican' },
-    { value: 'indian', label: 'Indian' },
-    { value: 'chinese', label: 'Chinese' },
-    { value: 'thai', label: 'Thai' },
-    { value: 'french', label: 'French' }
-  ];
-  
-  const mealTypeOptions = [
-    { value: '', label: 'Any Meal Type' },
-    { value: 'breakfast', label: 'Breakfast' },
-    { value: 'main course', label: 'Main Course' },
-    { value: 'side dish', label: 'Side Dish' },
-    { value: 'dessert', label: 'Dessert' },
-    { value: 'appetizer', label: 'Appetizer' },
-    { value: 'salad', label: 'Salad' },
-    { value: 'soup', label: 'Soup' }
-  ];
+  // render filter selectbox - used for diet and cuisine filters which work the same way
+  const renderSelect = (label, value, setter, options) => (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <select
+        value={value}
+        onChange={e => setter(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
+      >
+        {options.map(opt => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={submitSearch}>
         <div className="flex flex-col md:flex-row gap-3">
+          {/* Search Input */}
           <div className="flex-grow">
             <input
               type="text"
               placeholder="Search recipes, ingredients..."
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-              value={query}
-              onChange={handleQueryChange}
+              value={searchInput}
+              onChange={handleSearchChange}
             />
           </div>
+
+          {/* Filter Toggle Button */}
           <button
             type="button"
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={toggleFilters}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg flex items-center md:min-w-fit hover:bg-gray-300 transition-colors"
           >
             <svg
@@ -97,6 +124,8 @@ const SearchBar = ({ onSearch }) => {
             </svg>
             Filters
           </button>
+
+          {/* Search Button */}
           <button
             type="submit"
             className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg hover:from-green-600 hover:to-teal-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center"
@@ -117,58 +146,26 @@ const SearchBar = ({ onSearch }) => {
           </button>
         </div>
 
-        {showFilters && (
+        {/* Expandable Filter Section */}
+        {filtersVisible && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
             {/* Diet Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Diet
-              </label>
-              <select
-                name="diet"
-                value={filters.diet}
-                onChange={handleFilterChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              >
-                {dietOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {renderSelect('Diet', dietType, setDietType, DIETS)}
 
             {/* Cuisine Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Cuisine
-              </label>
-              <select
-                name="cuisine"
-                value={filters.cuisine}
-                onChange={handleFilterChange}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              >
-                {cuisineOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {renderSelect('Cuisine', cuisineType, setCuisineType, CUISINES)}
 
-            {/* Meal Type Filter */}
+            {/* Meal Type Filter - using direct approach instead of helper function */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Meal Type
               </label>
               <select
-                name="mealType"
-                value={filters.mealType}
-                onChange={handleFilterChange}
+                value={mealType}
+                onChange={e => setMealType(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               >
-                {mealTypeOptions.map(option => (
+                {MEAL_TYPES.map(option => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
@@ -183,9 +180,8 @@ const SearchBar = ({ onSearch }) => {
               </label>
               <input
                 type="number"
-                name="maxReadyTime"
-                value={filters.maxReadyTime}
-                onChange={handleFilterChange}
+                value={maxTime}
+                onChange={e => setMaxTime(e.target.value)}
                 placeholder="e.g., 30"
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
               />
@@ -195,6 +191,6 @@ const SearchBar = ({ onSearch }) => {
       </form>
     </div>
   );
-};
+}
 
 export default SearchBar; 

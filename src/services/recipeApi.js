@@ -1,29 +1,29 @@
 import axios from "axios";
 
-// Get a free API key from https://spoonacular.com/food-api
-// Ideally this would be in an environment variable
-// For demo purposes, you can use a free API key
+// API key from environment variables
 const API_KEY = process.env.REACT_APP_SPOONACULAR_API_KEY || "1";
-const BASE_URL = "https://api.spoonacular.com/recipes";
+const API_BASE = "https://api.spoonacular.com/recipes";
 
+// Check if we have a valid API key
+const hasValidKey =
+  API_KEY !== "1" && !!process.env.REACT_APP_SPOONACULAR_API_KEY;
 console.log(
-  "API Key detected:",
-  API_KEY !== "1" ? "Yes (using real API)" : "No (using mock data)"
+  "API Key status:",
+  hasValidKey ? "✓ Valid key found" : "✗ Using fallback data"
 );
 
-// We'll add some sample data for development when API key is not available
-const useMockData =
-  !process.env.REACT_APP_SPOONACULAR_API_KEY || API_KEY === "1";
+// fallback to mock data when no API key is available
+const offlineMode = !hasValidKey;
 
-// Mock data for search results
-const mockSearchResults = [
+// Some recipes to use when developing without API access
+const sampleRecipes = [
   {
     id: 654959,
     title: "Pasta With Tuna",
     image: "https://spoonacular.com/recipeImages/654959-312x231.jpg",
     imageType: "jpg",
     readyInMinutes: 45,
-    spoonacularScore: 95,
+    spoonacularScore: 95, // pretty good!
     aggregateLikes: 104,
     dishTypes: ["lunch", "main course", "main dish", "dinner"],
     diets: ["pescatarian"],
@@ -56,15 +56,15 @@ const mockSearchResults = [
     image: "https://spoonacular.com/recipeImages/654857-312x231.jpg",
     imageType: "jpg",
     readyInMinutes: 30,
-    spoonacularScore: 82,
+    spoonacularScore: 82, // not as good as the others
     aggregateLikes: 12,
     dishTypes: ["lunch", "main course", "main dish", "dinner"],
     diets: ["lacto ovo vegetarian"],
   },
 ];
 
-// Mock data for a single recipe
-const mockRecipeDetail = {
+// Detailed recipe info for offline mode
+const tunaPastaRecipe = {
   id: 654959,
   title: "Pasta With Tuna",
   image: "https://spoonacular.com/recipeImages/654959-556x370.jpg",
@@ -142,8 +142,8 @@ const mockRecipeDetail = {
   aggregateLikes: 104,
 };
 
-// Mock data for similar recipes
-const mockSimilarRecipes = [
+// Some related recipes we can suggest
+const relatedRecipes = [
   {
     id: 511728,
     title: "Pasta Margherita",
@@ -166,67 +166,84 @@ const mockSimilarRecipes = [
   },
 ];
 
+// Search recipes based on given parameters
 export const searchRecipes = async (params) => {
-  if (useMockData) {
-    // Return mock data for development
-    console.log("Using mock data for recipe search");
-    return mockSearchResults;
+  // For development without an API key
+  if (offlineMode) {
+    console.log("🔄 Using sample recipe data");
+    return sampleRecipes;
   }
 
   try {
-    const response = await axios.get(`${BASE_URL}/complexSearch`, {
+    // Make the actual API call if we have a key
+    const result = await axios.get(`${API_BASE}/complexSearch`, {
       params: {
         ...params,
         apiKey: API_KEY,
         addRecipeInformation: true,
-        number: 12,
+        number: 12, // limit results
       },
     });
-    return response.data.results;
-  } catch (error) {
-    console.error("Error searching recipes:", error);
-    throw error;
+
+    return result.data.results;
+  } catch (err) {
+    // Better error handling
+    if (err.response) {
+      console.error(`API Error (${err.response.status}):`, err.response.data);
+    } else {
+      console.error("Error searching recipes:", err.message);
+    }
+    throw err;
   }
 };
 
+// Get details for a specific recipe
 export const getRecipeById = async (id) => {
-  if (useMockData) {
-    // Return mock data for development
-    console.log("Using mock data for recipe detail");
-    return mockRecipeDetail;
+  // No API key? Use our sample data
+  if (offlineMode) {
+    console.log("🔄 Using sample recipe details");
+    return tunaPastaRecipe;
   }
 
   try {
-    const response = await axios.get(`${BASE_URL}/${id}/information`, {
+    const result = await axios.get(`${API_BASE}/${id}/information`, {
       params: {
         apiKey: API_KEY,
         includeNutrition: true,
       },
     });
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching recipe with id ${id}:`, error);
-    throw error;
+
+    return result.data;
+  } catch (err) {
+    // Handle common API errors
+    if (err.response && err.response.status === 404) {
+      console.error(`Recipe with ID ${id} not found`);
+    } else {
+      console.error(`Failed to fetch recipe ${id}:`, err.message);
+    }
+    throw err;
   }
 };
 
+// Find recipes similar to the one we're viewing
 export const getSimilarRecipes = async (id) => {
-  if (useMockData) {
-    // Return mock data for development
-    console.log("Using mock data for similar recipes");
-    return mockSimilarRecipes;
+  if (offlineMode) {
+    // Using our test data in dev mode
+    console.log("🔄 Using sample related recipes");
+    return relatedRecipes;
   }
 
   try {
-    const response = await axios.get(`${BASE_URL}/${id}/similar`, {
+    const result = await axios.get(`${API_BASE}/${id}/similar`, {
       params: {
         apiKey: API_KEY,
-        number: 4,
+        number: 4, // just a few suggestions
       },
     });
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching similar recipes for id ${id}:`, error);
-    throw error;
+
+    return result.data;
+  } catch (err) {
+    console.error(`Couldn't find similar recipes for ${id}:`, err.message);
+    throw err;
   }
 };
