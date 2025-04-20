@@ -18,17 +18,6 @@ const offlineMode = !hasValidKey;
 // Some recipes to use when developing without API access
 const sampleRecipes = [
   {
-    id: 654959,
-    title: "Pasta With Tuna",
-    image: "https://spoonacular.com/recipeImages/654959-312x231.jpg",
-    imageType: "jpg",
-    readyInMinutes: 45,
-    spoonacularScore: 95, // pretty good!
-    aggregateLikes: 104,
-    dishTypes: ["lunch", "main course", "main dish", "dinner"],
-    diets: ["pescatarian"],
-  },
-  {
     id: 511728,
     title: "Pasta Margherita",
     image: "https://spoonacular.com/recipeImages/511728-312x231.jpg",
@@ -40,44 +29,57 @@ const sampleRecipes = [
     diets: ["lacto ovo vegetarian"],
   },
   {
-    id: 654812,
-    title: "Pasta and Seafood",
-    image: "https://spoonacular.com/recipeImages/654812-312x231.jpg",
-    imageType: "jpg",
-    readyInMinutes: 45,
-    spoonacularScore: 89,
-    aggregateLikes: 24,
-    dishTypes: ["lunch", "main course", "main dish", "dinner"],
-    diets: ["pescatarian"],
-  },
-  {
     id: 654857,
     title: "Pasta On The Border",
     image: "https://spoonacular.com/recipeImages/654857-312x231.jpg",
     imageType: "jpg",
     readyInMinutes: 30,
-    spoonacularScore: 82, // not as good as the others
+    spoonacularScore: 82,
     aggregateLikes: 12,
     dishTypes: ["lunch", "main course", "main dish", "dinner"],
     diets: ["lacto ovo vegetarian"],
   },
+  {
+    id: 654905,
+    title: "Pasta Vegetable Soup",
+    image: "https://spoonacular.com/recipeImages/654905-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 25,
+    spoonacularScore: 95,
+    aggregateLikes: 87,
+    dishTypes: ["soup", "lunch", "main course"],
+    diets: ["lacto ovo vegetarian"],
+  },
+  {
+    id: 639851,
+    title: "Chana Masala",
+    image: "https://spoonacular.com/recipeImages/639851-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 30,
+    spoonacularScore: 94,
+    aggregateLikes: 176,
+    dishTypes: ["lunch", "main course", "main dish", "dinner"],
+    diets: ["vegetarian", "vegan"],
+  },
 ];
 
 // Detailed recipe info for offline mode
-const tunaPastaRecipe = {
-  id: 654959,
-  title: "Pasta With Tuna",
-  image: "https://spoonacular.com/recipeImages/654959-556x370.jpg",
-  readyInMinutes: 45,
+const vegetarianPastaRecipe = {
+  id: 511728,
+  title: "Pasta Margherita",
+  image: "https://spoonacular.com/recipeImages/511728-556x370.jpg",
+  readyInMinutes: 15,
   servings: 4,
   dishTypes: ["lunch", "main course", "main dish", "dinner"],
-  diets: ["pescatarian"],
+  diets: ["lacto ovo vegetarian"],
+  vegetarian: true,
+  vegan: false,
   summary:
-    "Pasta With Tuna might be just the main course you are searching for. This recipe makes 4 servings with <b>326 calories</b>, <b>24g of protein</b>, and <b>4g of fat</b> each. For <b>$1.68 per serving</b>, this recipe <b>covers 23%</b> of your daily requirements of vitamins and minerals. 104 people have made this recipe and would make it again. Head to the store and pick up flour, onion, basil, and a few other things to make it today. From preparation to the plate, this recipe takes approximately <b>45 minutes</b>. It is a good option if you're following a <b>pescatarian</b> diet. All things considered, we decided this recipe <b>deserves a spoonacular score of 96%</b>. This score is excellent.",
-  spoonacularScore: 95,
-  healthScore: 89,
+    "Pasta Margherita is a delicious vegetarian option. This recipe makes 4 servings with <b>512 calories</b>, <b>19g of protein</b>, and <b>15g of fat</b> each. For <b>$1.96 per serving</b>, this recipe <b>covers 28%</b> of your daily requirements of vitamins and minerals. 203 people have made this recipe and would make it again. From preparation to the plate, this recipe takes approximately <b>15 minutes</b>. It is a good option if you're following a <b>vegetarian</b> diet.",
+  spoonacularScore: 87,
+  healthScore: 82,
   instructions:
-    "<ol><li>Cook pasta according to package directions.</li><li>Meanwhile, in a large nonstick skillet, saute onion and garlic in oil until tender. Add tomatoes, broth, basil, sugar if desired, oregano, salt, pepper flakes and pepper; bring to a boil. Reduce heat; simmer, uncovered, for 10-15 minutes.</li><li>Drain tuna; break into chunks with a fork. Add tuna to tomato mixture; cook for 1-2 minutes or until heated through. Drain pasta; toss with tuna mixture. Sprinkle with Parmesan cheese.</li></ol>",
+    "<ol><li>Cook pasta according to package directions.</li><li>While pasta is cooking, heat olive oil in a large nonstick skillet over medium heat. Add garlic; cook 1 minute, stirring frequently.</li><li>Add tomatoes; cook 2 minutes or until thoroughly heated. Remove from heat.</li><li>Stir in salt and 1/4 cup basil.</li><li>Place pasta in a large bowl. Add tomato mixture, cheese, and remaining 1/4 cup basil; toss well. Garnish with fresh basil sprigs, if desired.</li></ol>",
   analyzedInstructions: [
     {
       name: "",
@@ -88,11 +90,19 @@ const tunaPastaRecipe = {
         },
         {
           number: 2,
-          step: "Meanwhile, in a large nonstick skillet, saute onion and garlic in oil until tender. Add tomatoes, broth, basil, sugar if desired, oregano, salt, pepper flakes and pepper; bring to a boil. Reduce heat; simmer, uncovered, for 10-15 minutes.",
+          step: "While pasta is cooking, heat olive oil in a large nonstick skillet over medium heat. Add garlic; cook 1 minute, stirring frequently.",
         },
         {
           number: 3,
-          step: "Drain tuna; break into chunks with a fork. Add tuna to tomato mixture; cook for 1-2 minutes or until heated through. Drain pasta; toss with tuna mixture. Sprinkle with Parmesan cheese.",
+          step: "Add tomatoes; cook 2 minutes or until thoroughly heated. Remove from heat.",
+        },
+        {
+          number: 4,
+          step: "Stir in salt and 1/4 cup basil.",
+        },
+        {
+          number: 5,
+          step: "Place pasta in a large bowl. Add tomato mixture, cheese, and remaining 1/4 cup basil; toss well. Garnish with fresh basil sprigs, if desired.",
         },
       ],
     },
@@ -107,18 +117,10 @@ const tunaPastaRecipe = {
       image: "fusilli.jpg",
     },
     {
-      id: 11282,
-      name: "onion",
-      original: "1 medium onion, chopped",
-      amount: 1,
-      unit: "medium",
-      image: "brown-onion.png",
-    },
-    {
       id: 11215,
       name: "garlic",
-      original: "2 garlic cloves, minced",
-      amount: 2,
+      original: "3 garlic cloves, minced",
+      amount: 3,
       unit: "cloves",
       image: "garlic.png",
     },
@@ -131,33 +133,39 @@ const tunaPastaRecipe = {
       image: "olive-oil.jpg",
     },
     {
-      id: 10015121,
-      name: "tuna",
-      original: "12 ounces tuna packed in water",
-      amount: 12,
-      unit: "ounces",
-      image: "canned-tuna.png",
+      id: 11529,
+      name: "tomato",
+      original: "4 cups chopped tomato",
+      amount: 4,
+      unit: "cups",
+      image: "tomato.png",
+    },
+    {
+      id: 2044,
+      name: "fresh basil",
+      original: "1/2 cup chopped fresh basil",
+      amount: 0.5,
+      unit: "cup",
+      image: "fresh-basil.jpg",
+    },
+    {
+      id: 1026,
+      name: "mozzarella",
+      original: "1/2 cup fresh mozzarella, diced",
+      amount: 0.5,
+      unit: "cup",
+      image: "mozzarella.png",
     },
   ],
-  aggregateLikes: 104,
+  aggregateLikes: 203,
 };
 
 // Some related recipes we can suggest
 const relatedRecipes = [
   {
-    id: 511728,
-    title: "Pasta Margherita",
-    readyInMinutes: 15,
-  },
-  {
     id: 654857,
     title: "Pasta On The Border",
     readyInMinutes: 30,
-  },
-  {
-    id: 654812,
-    title: "Pasta and Seafood",
-    readyInMinutes: 45,
   },
   {
     id: 654905,
@@ -171,7 +179,14 @@ export const searchRecipes = async (params) => {
   // For development without an API key
   if (offlineMode) {
     console.log("🔄 Using sample recipe data");
-    return sampleRecipes;
+    // Filter sample recipes to only include vegetarian ones
+    return sampleRecipes.filter(
+      (recipe) =>
+        recipe.diets &&
+        recipe.diets.some(
+          (diet) => diet.includes("vegetarian") || diet === "vegan"
+        )
+    );
   }
 
   try {
@@ -182,6 +197,8 @@ export const searchRecipes = async (params) => {
         apiKey: API_KEY,
         addRecipeInformation: true,
         number: 12, // limit results
+        excludeIngredients: "beef,ground beef,steak", // exclude beef recipes
+        diet: params.diet || "vegetarian", // Only vegetarian recipes if not specified
       },
     });
 
@@ -202,7 +219,7 @@ export const getRecipeById = async (id) => {
   // No API key? Use our sample data
   if (offlineMode) {
     console.log("🔄 Using sample recipe details");
-    return tunaPastaRecipe;
+    return vegetarianPastaRecipe;
   }
 
   try {
@@ -212,6 +229,62 @@ export const getRecipeById = async (id) => {
         includeNutrition: true,
       },
     });
+
+    // Check if this recipe contains beef or is non-vegetarian
+    if (result.data) {
+      // If the recipe is marked as non-vegetarian, reject it
+      if (!result.data.vegetarian) {
+        throw new Error(
+          "This recipe is non-vegetarian and excluded from your preferences"
+        );
+      }
+
+      // Double-check ingredients for meat products
+      if (result.data.extendedIngredients) {
+        const ingredients = result.data.extendedIngredients.map((ing) =>
+          ing.name.toLowerCase()
+        );
+
+        const nonVegTerms = [
+          "beef",
+          "steak",
+          "chicken",
+          "pork",
+          "ham",
+          "bacon",
+          "turkey",
+          "lamb",
+          "veal",
+          "duck",
+          "goose",
+          "meat",
+          "fish",
+          "salmon",
+          "tuna",
+          "shrimp",
+          "prawn",
+          "crab",
+          "lobster",
+          "oyster",
+          "mussel",
+          "clam",
+          "scallop",
+          "anchovy",
+          "sardine",
+        ];
+
+        const containsNonVeg = ingredients.some((ing) =>
+          nonVegTerms.some((term) => ing.includes(term))
+        );
+
+        // If it contains non-vegetarian ingredients, throw an error
+        if (containsNonVeg) {
+          throw new Error(
+            "This recipe contains non-vegetarian ingredients which are excluded from your preferences"
+          );
+        }
+      }
+    }
 
     return result.data;
   } catch (err) {
@@ -234,16 +307,173 @@ export const getSimilarRecipes = async (id) => {
   }
 
   try {
+    // First get similar recipes
     const result = await axios.get(`${API_BASE}/${id}/similar`, {
       params: {
         apiKey: API_KEY,
-        number: 4, // just a few suggestions
+        number: 12, // requesting more to filter out non-vegetarian ones
       },
     });
 
-    return result.data;
+    // Then filter out any non-vegetarian recipes
+    if (result.data && result.data.length > 0) {
+      // For similar recipes endpoint, we need to do additional checks
+      const recipeIds = result.data.map((recipe) => recipe.id).join(",");
+
+      // Get bulk information about these recipes to check if they're vegetarian
+      const detailsResult = await axios.get(`${API_BASE}/informationBulk`, {
+        params: {
+          apiKey: API_KEY,
+          ids: recipeIds,
+        },
+      });
+
+      // Filter out any non-vegetarian recipes
+      const filteredRecipes = detailsResult.data
+        .filter((recipe) => recipe.vegetarian === true)
+        .map((recipe) => ({
+          id: recipe.id,
+          title: recipe.title,
+          readyInMinutes: recipe.readyInMinutes,
+        }))
+        .slice(0, 4); // Limit to 4 recipes
+
+      return filteredRecipes;
+    }
+
+    return result.data.slice(0, 4);
   } catch (err) {
     console.error(`Couldn't find similar recipes for ${id}:`, err.message);
+    // In case of error, still return some data if possible
+    if (err.response && err.response.status === 404) {
+      return relatedRecipes;
+    }
+    throw err;
+  }
+};
+
+// Get Indian recipes specifically
+export const getIndianRecipes = async (query = "", additionalParams = {}) => {
+  // For development without an API key
+  if (offlineMode) {
+    console.log("🔄 Using sample Indian recipe data");
+    return [
+      {
+        id: 639851,
+        title: "Chana Masala",
+        image: "https://spoonacular.com/recipeImages/639851-312x231.jpg",
+        imageType: "jpg",
+        readyInMinutes: 30,
+        spoonacularScore: 94,
+        aggregateLikes: 176,
+        dishTypes: ["lunch", "main course", "main dish", "dinner"],
+        diets: ["vegetarian", "vegan"],
+        summary:
+          "A popular vegetarian dish from Northern India made with chickpeas simmered in a spicy tomato sauce with distinctive spices including garam masala and amchoor (dried mango powder).",
+      },
+      {
+        id: 654698,
+        title: "Palak Paneer",
+        image: "https://spoonacular.com/recipeImages/654698-312x231.jpg",
+        imageType: "jpg",
+        readyInMinutes: 45,
+        spoonacularScore: 92,
+        aggregateLikes: 184,
+        dishTypes: ["lunch", "main course", "main dish", "dinner"],
+        diets: ["vegetarian"],
+        summary:
+          "A classic North Indian dish consisting of paneer cheese cubes in a smooth, creamy spinach sauce spiced with garam masala, cumin, and other traditional spices.",
+      },
+      {
+        id: 658577,
+        title: "Vegetable Biryani",
+        image: "https://spoonacular.com/recipeImages/658577-312x231.jpg",
+        imageType: "jpg",
+        readyInMinutes: 60,
+        spoonacularScore: 90,
+        aggregateLikes: 165,
+        dishTypes: ["lunch", "main course", "main dish", "dinner"],
+        diets: ["vegetarian"],
+        summary:
+          "A fragrant rice dish cooked with aromatic spices, herbs, and mixed vegetables. This festive dish is layered and steamed to perfection.",
+      },
+      {
+        id: 662968,
+        title: "Chole Bhature",
+        image: "https://spoonacular.com/recipeImages/662968-312x231.jpg",
+        imageType: "jpg",
+        readyInMinutes: 75,
+        spoonacularScore: 88,
+        aggregateLikes: 146,
+        dishTypes: ["breakfast", "lunch", "main course"],
+        diets: ["vegetarian"],
+        summary:
+          "A Punjabi dish combining spicy chickpea curry (chole) with deep-fried bread (bhature). This popular North Indian street food is often enjoyed as a hearty breakfast or lunch.",
+      },
+      {
+        id: 661322,
+        title: "Dosa with Sambar and Chutney",
+        image: "https://spoonacular.com/recipeImages/661322-312x231.jpg",
+        imageType: "jpg",
+        readyInMinutes: 90,
+        spoonacularScore: 89,
+        aggregateLikes: 132,
+        dishTypes: ["breakfast", "lunch"],
+        diets: ["vegetarian", "gluten-free"],
+        summary:
+          "A South Indian specialty consisting of a thin, crispy crepe made from fermented rice and lentil batter, typically served with sambar (lentil soup) and coconut chutney.",
+      },
+      {
+        id: 663559,
+        title: "Aloo Gobi",
+        image: "https://spoonacular.com/recipeImages/663559-312x231.jpg",
+        imageType: "jpg",
+        readyInMinutes: 35,
+        spoonacularScore: 91,
+        aggregateLikes: 107,
+        dishTypes: ["side dish", "lunch", "main course"],
+        diets: ["vegetarian", "vegan"],
+        summary:
+          "A dry vegetable dish made with potatoes (aloo), cauliflower (gobi) and Indian spices. This simple yet flavorful dish is a staple in Indian homes.",
+      },
+      {
+        id: 664257,
+        title: "Malai Kofta",
+        image: "https://spoonacular.com/recipeImages/664257-312x231.jpg",
+        imageType: "jpg",
+        readyInMinutes: 60,
+        spoonacularScore: 93,
+        aggregateLikes: 98,
+        dishTypes: ["lunch", "main course", "main dish", "dinner"],
+        diets: ["vegetarian"],
+        summary:
+          "A luxurious North Indian dish featuring fried vegetable and paneer dumplings (kofta) served in a rich, creamy tomato sauce. Often prepared for special occasions and celebrations.",
+      },
+    ];
+  }
+
+  try {
+    // Make the API call with Indian cuisine filter
+    const result = await axios.get(`${API_BASE}/complexSearch`, {
+      params: {
+        apiKey: API_KEY,
+        cuisine: "indian",
+        query: query,
+        addRecipeInformation: true,
+        number: 12,
+        excludeIngredients: "beef,ground beef,steak", // exclude beef recipes
+        diet: additionalParams.diet || "vegetarian", // Only vegetarian recipes if not specified
+        ...additionalParams,
+      },
+    });
+
+    return result.data.results;
+  } catch (err) {
+    if (err.response) {
+      console.error(`API Error (${err.response.status}):`, err.response.data);
+    } else {
+      console.error("Error searching Indian recipes:", err.message);
+    }
     throw err;
   }
 };

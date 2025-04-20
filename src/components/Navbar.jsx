@@ -32,6 +32,14 @@ const Navbar = () => {
               Home
             </Link>
             <Link 
+              to="/indian-recipes" 
+              className={`text-white hover:text-green-200 transition-colors ${
+                isActive('/indian-recipes') ? 'font-bold border-b-2 border-white' : ''
+              }`}
+            >
+              Indian Recipes
+            </Link>
+            <Link 
               to="/favorites" 
               className={`text-white hover:text-green-200 transition-colors ${
                 isActive('/favorites') ? 'font-bold border-b-2 border-white' : ''
@@ -65,6 +73,15 @@ const Navbar = () => {
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Home
+          </Link>
+          <Link 
+            to="/indian-recipes" 
+            className={`block py-2 px-4 text-sm text-white hover:bg-green-600 ${
+              isActive('/indian-recipes') ? 'bg-green-600 font-bold' : ''
+            }`}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Indian Recipes
           </Link>
           <Link 
             to="/favorites" 

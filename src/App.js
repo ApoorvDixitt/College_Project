@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import FavoritesPage from "./pages/FavoritesPage";
+import IndianRecipesPage from "./pages/IndianRecipesPage";
 import ScrollToTop from "./components/ScrollToTop";
 import "./index.css";
 
@@ -16,6 +17,7 @@ function App() {
           <main className="container mx-auto py-6 px-4">
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/indian-recipes" element={<IndianRecipesPage />} />
               <Route path="/recipe/:id" element={<RecipeDetailPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
             </Routes>
