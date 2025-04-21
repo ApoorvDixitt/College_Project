@@ -1,21 +1,22 @@
 import axios from "axios";
 
 // API key from environment variables
-const API_KEY = process.env.REACT_APP_SPOONACULAR_API_KEY || "1";
+const API_KEY =
+  process.env.REACT_APP_SPOONACULAR_API_KEY ||
+  "d3ef5bc38382464f8eda84653e6ffc0e";
 const API_BASE = "https://api.spoonacular.com/recipes";
 
 // Check if we have a valid API key
-const hasValidKey =
-  API_KEY !== "1" && !!process.env.REACT_APP_SPOONACULAR_API_KEY;
+const hasValidKey = API_KEY !== "1" && !!API_KEY;
 console.log(
   "API Key status:",
   hasValidKey ? "✓ Valid key found" : "✗ Using fallback data"
 );
 
 // fallback to mock data when no API key is available
-const offlineMode = !hasValidKey;
+let useOfflineMode = !hasValidKey;
 
-// Some recipes to use when developing without API access
+// Some recipes to use when developing without API access or when quota is exceeded
 const sampleRecipes = [
   {
     id: 511728,
@@ -59,6 +60,50 @@ const sampleRecipes = [
     spoonacularScore: 94,
     aggregateLikes: 176,
     dishTypes: ["lunch", "main course", "main dish", "dinner"],
+    diets: ["vegetarian", "vegan"],
+  },
+  {
+    id: 654698,
+    title: "Palak Paneer",
+    image: "https://spoonacular.com/recipeImages/654698-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 45,
+    spoonacularScore: 92,
+    aggregateLikes: 184,
+    dishTypes: ["lunch", "main course", "main dish", "dinner"],
+    diets: ["vegetarian"],
+  },
+  {
+    id: 658577,
+    title: "Vegetable Biryani",
+    image: "https://spoonacular.com/recipeImages/658577-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 60,
+    spoonacularScore: 90,
+    aggregateLikes: 165,
+    dishTypes: ["lunch", "main course", "main dish", "dinner"],
+    diets: ["vegetarian"],
+  },
+  {
+    id: 662968,
+    title: "Chole Bhature",
+    image: "https://spoonacular.com/recipeImages/662968-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 75,
+    spoonacularScore: 88,
+    aggregateLikes: 146,
+    dishTypes: ["breakfast", "lunch", "main course"],
+    diets: ["vegetarian"],
+  },
+  {
+    id: 663559,
+    title: "Aloo Gobi",
+    image: "https://spoonacular.com/recipeImages/663559-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 35,
+    spoonacularScore: 91,
+    aggregateLikes: 107,
+    dishTypes: ["side dish", "lunch", "main course"],
     diets: ["vegetarian", "vegan"],
   },
 ];
@@ -174,10 +219,66 @@ const relatedRecipes = [
   },
 ];
 
+// Sample Indian recipes for when API is unavailable or quota exceeded
+const sampleIndianRecipes = [
+  {
+    id: 639851,
+    title: "Chana Masala",
+    image: "https://spoonacular.com/recipeImages/639851-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 30,
+    spoonacularScore: 94,
+    aggregateLikes: 176,
+    dishTypes: ["lunch", "main course", "main dish", "dinner"],
+    diets: ["vegetarian", "vegan"],
+    summary:
+      "A popular vegetarian dish from Northern India made with chickpeas simmered in a spicy tomato sauce with distinctive spices including garam masala and amchoor (dried mango powder).",
+  },
+  {
+    id: 654698,
+    title: "Palak Paneer",
+    image: "https://spoonacular.com/recipeImages/654698-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 45,
+    spoonacularScore: 92,
+    aggregateLikes: 184,
+    dishTypes: ["lunch", "main course", "main dish", "dinner"],
+    diets: ["vegetarian"],
+    summary:
+      "A classic North Indian dish consisting of paneer cheese cubes in a smooth, creamy spinach sauce spiced with garam masala, cumin, and other traditional spices.",
+  },
+  {
+    id: 658577,
+    title: "Vegetable Biryani",
+    image: "https://spoonacular.com/recipeImages/658577-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 60,
+    spoonacularScore: 90,
+    aggregateLikes: 165,
+    dishTypes: ["lunch", "main course", "main dish", "dinner"],
+    diets: ["vegetarian"],
+    summary:
+      "A fragrant rice dish cooked with aromatic spices, herbs, and mixed vegetables. This festive dish is layered and steamed to perfection.",
+  },
+  {
+    id: 662968,
+    title: "Chole Bhature",
+    image: "https://spoonacular.com/recipeImages/662968-312x231.jpg",
+    imageType: "jpg",
+    readyInMinutes: 75,
+    spoonacularScore: 88,
+    aggregateLikes: 146,
+    dishTypes: ["breakfast", "lunch", "main course"],
+    diets: ["vegetarian"],
+    summary:
+      "A Punjabi dish combining spicy chickpea curry (chole) with deep-fried bread (bhature). This popular North Indian street food is often enjoyed as a hearty breakfast or lunch.",
+  },
+];
+
 // Search recipes based on given parameters
 export const searchRecipes = async (params) => {
-  // For development without an API key
-  if (offlineMode) {
+  // For development without an API key or when quota is exceeded
+  if (useOfflineMode) {
     console.log("🔄 Using sample recipe data");
     // Filter sample recipes to only include vegetarian ones
     return sampleRecipes.filter(
@@ -204,7 +305,20 @@ export const searchRecipes = async (params) => {
 
     return result.data.results;
   } catch (err) {
-    // Better error handling
+    // Handle quota exceeded error (402) by returning mock data
+    if (err.response && err.response.status === 402) {
+      console.log("⚠️ API quota exceeded, using sample recipe data");
+      useOfflineMode = true; // Switch to offline mode for the rest of the session
+      return sampleRecipes.filter(
+        (recipe) =>
+          recipe.diets &&
+          recipe.diets.some(
+            (diet) => diet.includes("vegetarian") || diet === "vegan"
+          )
+      );
+    }
+
+    // Better error handling for other errors
     if (err.response) {
       console.error(`API Error (${err.response.status}):`, err.response.data);
     } else {
@@ -217,7 +331,7 @@ export const searchRecipes = async (params) => {
 // Get details for a specific recipe
 export const getRecipeById = async (id) => {
   // No API key? Use our sample data
-  if (offlineMode) {
+  if (useOfflineMode) {
     console.log("🔄 Using sample recipe details");
     return vegetarianPastaRecipe;
   }
@@ -288,6 +402,13 @@ export const getRecipeById = async (id) => {
 
     return result.data;
   } catch (err) {
+    // Handle quota exceeded error (402) by returning mock data
+    if (err.response && err.response.status === 402) {
+      console.log("⚠️ API quota exceeded, using sample recipe data");
+      useOfflineMode = true; // Switch to offline mode for the rest of the session
+      return vegetarianPastaRecipe;
+    }
+
     // Handle common API errors
     if (err.response && err.response.status === 404) {
       console.error(`Recipe with ID ${id} not found`);
@@ -300,7 +421,7 @@ export const getRecipeById = async (id) => {
 
 // Find recipes similar to the one we're viewing
 export const getSimilarRecipes = async (id) => {
-  if (offlineMode) {
+  if (useOfflineMode) {
     // Using our test data in dev mode
     console.log("🔄 Using sample related recipes");
     return relatedRecipes;
@@ -343,6 +464,13 @@ export const getSimilarRecipes = async (id) => {
 
     return result.data.slice(0, 4);
   } catch (err) {
+    // Handle quota exceeded error (402) by returning mock data
+    if (err.response && err.response.status === 402) {
+      console.log("⚠️ API quota exceeded, using sample related recipes");
+      useOfflineMode = true; // Switch to offline mode for the rest of the session
+      return relatedRecipes;
+    }
+
     console.error(`Couldn't find similar recipes for ${id}:`, err.message);
     // In case of error, still return some data if possible
     if (err.response && err.response.status === 404) {
@@ -354,102 +482,10 @@ export const getSimilarRecipes = async (id) => {
 
 // Get Indian recipes specifically
 export const getIndianRecipes = async (query = "", additionalParams = {}) => {
-  // For development without an API key
-  if (offlineMode) {
+  // For development without an API key or when quota is exceeded
+  if (useOfflineMode) {
     console.log("🔄 Using sample Indian recipe data");
-    return [
-      {
-        id: 639851,
-        title: "Chana Masala",
-        image: "https://spoonacular.com/recipeImages/639851-312x231.jpg",
-        imageType: "jpg",
-        readyInMinutes: 30,
-        spoonacularScore: 94,
-        aggregateLikes: 176,
-        dishTypes: ["lunch", "main course", "main dish", "dinner"],
-        diets: ["vegetarian", "vegan"],
-        summary:
-          "A popular vegetarian dish from Northern India made with chickpeas simmered in a spicy tomato sauce with distinctive spices including garam masala and amchoor (dried mango powder).",
-      },
-      {
-        id: 654698,
-        title: "Palak Paneer",
-        image: "https://spoonacular.com/recipeImages/654698-312x231.jpg",
-        imageType: "jpg",
-        readyInMinutes: 45,
-        spoonacularScore: 92,
-        aggregateLikes: 184,
-        dishTypes: ["lunch", "main course", "main dish", "dinner"],
-        diets: ["vegetarian"],
-        summary:
-          "A classic North Indian dish consisting of paneer cheese cubes in a smooth, creamy spinach sauce spiced with garam masala, cumin, and other traditional spices.",
-      },
-      {
-        id: 658577,
-        title: "Vegetable Biryani",
-        image: "https://spoonacular.com/recipeImages/658577-312x231.jpg",
-        imageType: "jpg",
-        readyInMinutes: 60,
-        spoonacularScore: 90,
-        aggregateLikes: 165,
-        dishTypes: ["lunch", "main course", "main dish", "dinner"],
-        diets: ["vegetarian"],
-        summary:
-          "A fragrant rice dish cooked with aromatic spices, herbs, and mixed vegetables. This festive dish is layered and steamed to perfection.",
-      },
-      {
-        id: 662968,
-        title: "Chole Bhature",
-        image: "https://spoonacular.com/recipeImages/662968-312x231.jpg",
-        imageType: "jpg",
-        readyInMinutes: 75,
-        spoonacularScore: 88,
-        aggregateLikes: 146,
-        dishTypes: ["breakfast", "lunch", "main course"],
-        diets: ["vegetarian"],
-        summary:
-          "A Punjabi dish combining spicy chickpea curry (chole) with deep-fried bread (bhature). This popular North Indian street food is often enjoyed as a hearty breakfast or lunch.",
-      },
-      {
-        id: 661322,
-        title: "Dosa with Sambar and Chutney",
-        image: "https://spoonacular.com/recipeImages/661322-312x231.jpg",
-        imageType: "jpg",
-        readyInMinutes: 90,
-        spoonacularScore: 89,
-        aggregateLikes: 132,
-        dishTypes: ["breakfast", "lunch"],
-        diets: ["vegetarian", "gluten-free"],
-        summary:
-          "A South Indian specialty consisting of a thin, crispy crepe made from fermented rice and lentil batter, typically served with sambar (lentil soup) and coconut chutney.",
-      },
-      {
-        id: 663559,
-        title: "Aloo Gobi",
-        image: "https://spoonacular.com/recipeImages/663559-312x231.jpg",
-        imageType: "jpg",
-        readyInMinutes: 35,
-        spoonacularScore: 91,
-        aggregateLikes: 107,
-        dishTypes: ["side dish", "lunch", "main course"],
-        diets: ["vegetarian", "vegan"],
-        summary:
-          "A dry vegetable dish made with potatoes (aloo), cauliflower (gobi) and Indian spices. This simple yet flavorful dish is a staple in Indian homes.",
-      },
-      {
-        id: 664257,
-        title: "Malai Kofta",
-        image: "https://spoonacular.com/recipeImages/664257-312x231.jpg",
-        imageType: "jpg",
-        readyInMinutes: 60,
-        spoonacularScore: 93,
-        aggregateLikes: 98,
-        dishTypes: ["lunch", "main course", "main dish", "dinner"],
-        diets: ["vegetarian"],
-        summary:
-          "A luxurious North Indian dish featuring fried vegetable and paneer dumplings (kofta) served in a rich, creamy tomato sauce. Often prepared for special occasions and celebrations.",
-      },
-    ];
+    return sampleIndianRecipes;
   }
 
   try {
@@ -460,7 +496,7 @@ export const getIndianRecipes = async (query = "", additionalParams = {}) => {
         cuisine: "indian",
         query: query,
         addRecipeInformation: true,
-        number: 12,
+        number: additionalParams.number || 12,
         excludeIngredients: "beef,ground beef,steak", // exclude beef recipes
         diet: additionalParams.diet || "vegetarian", // Only vegetarian recipes if not specified
         ...additionalParams,
@@ -469,6 +505,13 @@ export const getIndianRecipes = async (query = "", additionalParams = {}) => {
 
     return result.data.results;
   } catch (err) {
+    // Handle quota exceeded error (402) by returning mock data
+    if (err.response && err.response.status === 402) {
+      console.log("⚠️ API quota exceeded, using sample Indian recipe data");
+      useOfflineMode = true; // Switch to offline mode for the rest of the session
+      return sampleIndianRecipes;
+    }
+
     if (err.response) {
       console.error(`API Error (${err.response.status}):`, err.response.data);
     } else {
